@@ -7,12 +7,14 @@ import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.ImageView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.FileProvider
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import br.com.caelum.twittelumappweb.R
 import br.com.caelum.twittelumappweb.databinding.ActivityTweetBinding
@@ -41,7 +43,17 @@ class TweetActivity : AppCompatActivity() {
 
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
+
+        viewModel.falha().observe(this, Observer { excecao ->
+            Toast.makeText(this, "erro: ${excecao?.message}", Toast.LENGTH_LONG).show()
+            Log.e("TWEET", "falha na requisição", excecao)
+        })
+        viewModel.novoTweet().observe(this, Observer { tweet ->
+            Toast.makeText(this, "Tweet salvo: ${tweet?.mensagem}", Toast.LENGTH_LONG).show()
+            Log.i("TWEET", "$tweet criado na API")
+        })
     }
+
 
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -94,6 +106,7 @@ class TweetActivity : AppCompatActivity() {
 
         val tweet = criaTweet()
 
+        Log.i("tweet", "$tweet")
         viewModel.salva(tweet)
 
         Toast.makeText(this, "$tweet foi salvo com sucesso :D", Toast.LENGTH_LONG).show()
@@ -148,6 +161,8 @@ class TweetActivity : AppCompatActivity() {
         binding.tweetFoto.scaleType = ImageView.ScaleType.FIT_XY
 
     }
+
+
 
 
 }

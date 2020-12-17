@@ -50,7 +50,7 @@ class LoginActivity : AppCompatActivity() {
         val nome = binding.loginCampoNome.text.toString()
         val senha = binding.loginCampoSenha.text.toString()
         val username = binding.loginCampoUsername.text.toString()
-        return Usuario(nome, senha, username)
+        return Usuario(username = username, senha = senha, nome = nome )
     }
 }
 

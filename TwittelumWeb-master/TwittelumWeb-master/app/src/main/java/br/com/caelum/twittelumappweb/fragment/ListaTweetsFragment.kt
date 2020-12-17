@@ -23,8 +23,12 @@ class ListaTweetsFragment : Fragment (){
             container: ViewGroup?,
             savedInstanceState: Bundle?): View? {
         val binding = ListaTweetsFragmentBinding.inflate(inflater, container, false)
-        val lista = viewModel.tweets()
-        binding.listaTweets.adapter = TweetAdapter(lista)
+
+        viewModel.tweets().observe(this) {
+            it?.let {
+                binding.listaTweets.adapter = TweetAdapter(it)
+            }
+        }
 
         return binding.root
     }

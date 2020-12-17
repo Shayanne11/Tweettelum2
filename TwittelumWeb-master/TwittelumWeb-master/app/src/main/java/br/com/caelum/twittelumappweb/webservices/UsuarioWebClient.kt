@@ -15,22 +15,43 @@ class UsuarioWebClient (retrofit: Retrofit) {
     private val service: UsuarioService by lazy {
         retrofit.create(UsuarioService::class.java)
     }
+
+
     fun registra(usuario: Usuario, sucesso: (usuario: Usuario) -> Unit, falha: (Throwable) -> Unit)
     {
         val chamadaPraCriar = service.cria(usuario)
-        chamadaPraCriar.enqueue(object : Callback<Usuario> {
-            override fun onFailure(call: Call<Usuario>, t: Throwable) {
-                falha(t)
-            }
-            override fun onResponse(call: Call<Usuario>, response: Response<Usuario>) {
-                response.body()?.let(sucesso)
-            }
-        })
+        chamadaPraCriar.enqueue(callback(sucesso,falha))
     }
+
+    fun fazLogin(usuario: Usuario, sucesso: (usuario: Usuario) -> Unit, falha: (Throwable) -> Unit)
+    {
+        val chamadaPraLogar = service.loga(usuario)
+        chamadaPraLogar.enqueue(callback(sucesso, falha))
+    }
+
+   private fun callback(sucesso: (usuario: Usuario) -> Unit, falha: (Throwable) -> Unit) =
+           object :Callback<Usuario> {
+       override fun onFailure(call: Call<Usuario>, t: Throwable) {
+           falha(t)
+       }
+       override fun onResponse(call: Call<Usuario>, response: Response<Usuario>) { //colocar msg erro familia 500
+           response.body()?.let(sucesso)
+       }
+   }
+
+
+
+
+
+
+
 //interface já criada
 
     private interface UsuarioService {
         @POST("/usuario")
         fun cria(@Body usuario: Usuario): Call<Usuario>
+
+        @POST("/usuario/login")
+        fun loga(@Body usuario: Usuario): Call<Usuario>
     }
 }
